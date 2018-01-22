@@ -89,7 +89,7 @@ void setup() {
   while(!init_servos()) {}
   #endif
 
-  Serial.begin(SERIAL_8N1);
+  Serial.begin(9600);
 }
 
 void update_servos(int current_tilt, int current_pan) {
