@@ -9,6 +9,9 @@
 
  This example code is in the public domain.
  */
+#ifndef DISABLE_SERVOS
+#define DISABLE_SERVOS 1
+#endif
 
 #include <Servo.h>
 #include <I2C.h>
@@ -62,24 +65,35 @@ void read_distance(uint8_t* result) {
   I2c.end();
 }
 
-
 uint8_t* lidar_result;
+
+struct Lidar {
+  uint8_t signal_strength;
+  uint16_t full_distance;
+};
+
+struct Lidar convert_bytes_to_result(uint8_t* bytes) {
+  struct Lidar lidar;
+  lidar.signal_strength = bytes[0];
+  lidar.full_distance = bytes[1]<<8 + bytes[2];
+  return lidar;
+}
 
 // the setup routine runs once when you press reset:
 void setup() {
   lidar_result = (uint8_t*) malloc(3 * sizeof(uint8_t));
+  
+  #ifndef DISABLE_SERVOS
   panServo.attach(panPin);
   tiltServo.attach(tiltPin);
   while(!init_servos()) {}
+  #endif
+
+  Serial.begin(SERIAL_8N1);
 }
 
-// the loop routine runs over and over again forever:
-void loop() {
-  int current_tilt = tiltServo.read();
-  int current_pan = panServo.read();
-
+void update_servos(int current_tilt, int current_pan) {
   if (is_tilt_at_top() && current_pan >= MAX_PAN) {
-    delay(10);
     return;
   }
   
@@ -97,11 +111,32 @@ void loop() {
     }
   }
 
-  read_distance(lidar_result);
-
   tiltServo.write(tilt_target_angle);
   pan_target_angle = current_pan + pan_direction;  
   panServo.write(pan_target_angle);
+}
 
-  delay(10);
+// the loop routine runs over and over again forever:
+void loop() {
+  Serial.println("Testing");
+  read_distance(lidar_result);
+  struct Lidar lidar = convert_bytes_to_result(lidar_result);
+  
+  #ifndef DISABLE_SERVOS
+  int current_tilt = tiltServo.read();
+  int current_pan = panServo.read();
+  update_servos(current_tilt, current_pan);
+  #else
+  int current_tilt = 0;
+  int current_pan = 0;
+  #endif
+
+  Serial.print(current_pan);
+  Serial.print(",");
+  Serial.print(current_tilt);
+  Serial.print(",");
+  Serial.print(lidar.signal_strength);
+  Serial.print(",");
+  Serial.println(lidar.full_distance);
+  delay(100);
 }
