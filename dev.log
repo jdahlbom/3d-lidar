@@ -1,0 +1,20 @@
+Development log
+===============
+
+Monday, Jan 22nd
+----------------
+Picked up from where I left a week ago:
+- Servo control is working, but the pan servo is aligned off to the side.
+- Attachment plate for the lidar<->servo connection needs to be designed,
+  it's more trouble than worth to rig something temporary compared to ordering 3d printed plate.
+- Lidar measurements & I2C is untested, circuit schematic created for the wiring.
+
+Decided to focus solely on the Lidar measurements and I2C aspect.
+I begun by grounding the unused PWM-pins in the Lidar wiring just in case. I used 12 kohm resistors between the pin and GND.
+Could not get any reading from the Lidar - not sure if the measurement should be visible laser but if so, the whole
+measurement is not working at all. Tried using the I2C for reading, but didn't really measure I2C properly for it.
+
+I'm still missing the recommended 680uF capacitor between 5V and GND, will have to scrounge older projects for the capacitor.
+
+/ Jukka
+
