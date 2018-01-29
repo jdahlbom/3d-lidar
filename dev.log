@@ -18,3 +18,23 @@ I'm still missing the recommended 680uF capacitor between 5V and GND, will have 
 
 / Jukka
 
+
+Monday, Jan 29th
+----------------
+We're using DSSCircuits.com Arduino I2C Master Library in order to use multibyte read support available in Lidar Lite v3
+dsscircuits.com/articles/86-articles/66-arduino-i2c-master-library
+
+Earlier code didn't send the mearurement byte.
+
+Useful example of I2C was found at https://github.com/PulsedLight3D/LIDARLite_StateMachine
+
+Rewrote the read logic to similar to PulsedLight3D example.
+Got huge 680uF 200V capacitors to wait for installation.
+
+Next up: Set up the capacitor, test the new I2C code. I expect it's still not working at first try.
+If there are problems, one more potential reason might be the pullup resistor setup which is
+a "best guess" at the moment.
+
+/ Jukka
+
+

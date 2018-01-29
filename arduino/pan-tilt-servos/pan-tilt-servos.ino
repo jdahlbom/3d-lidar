@@ -16,6 +16,7 @@
 #include <Servo.h>
 #include <I2C.h>
 
+
 int panPin = 9;    // the PWM pin pan servo is attached to
 int tiltPin = 10;   // the PWM pin tilt servo is attached to
 
@@ -35,9 +36,13 @@ const int TILT_UP=-2;
 const int MIN_TILT = 45;
 const int MAX_TILT = 135;
 
-const int LIDAR_ADDR = 0x62;
-const int SIGNAL_STRENGTH_REGISTER = 0x0e;
+#define ACQ_COMMAND 0x00
+#define ACQ_CONFIG_REQ 0x04
 
+// Set most significant byte to 1 to enable continuous reading.
+#define LIDAR_ADDR 0x62
+#define SIGNAL_STRENGTH_REGISTER 0x8e
+#define STATUS 0x01
 
 bool is_tilt_at_top() {
   int tilt_angle = tiltServo.read();
@@ -58,11 +63,27 @@ boolean init_servos() {
   return false;
 }
 
+void lidar_write_and_wait(int register_address, int value) {
+  uint8_t nack_ack = 100;
+  while(nack_ack != 0) {
+    nack_ack = I2c.write(LIDAR_ADDR, register_address, value);
+    delay(2);
+  }
+}
 
-void read_distance(uint8_t* result) {
-  I2c.begin();
-  int error_code = I2c.read(LIDAR_ADDR, SIGNAL_STRENGTH_REGISTER, 3, result);
-  I2c.end();
+void lidar_read_and_wait(int register_address, int num_of_bytes, uint8_t* result) {
+  uint8_t nack_ack = 100;
+  while(nack_ack != 0) {
+    nack_ack = I2c.read(LIDAR_ADDR, register_address, num_of_bytes, result);
+    delay(2);
+  }
+}
+
+void lidar_read_distance(uint8_t* result) {
+  const int READ_WAIT_ATTEMPTS = 10;
+
+  lidar_write_and_wait(ACQ_COMMAND, ACQ_CONFIG_REQ);
+  lidar_read_and_wait(SIGNAL_STRENGTH_REGISTER, 3, result);
 }
 
 uint8_t* lidar_result;
@@ -81,6 +102,7 @@ struct Lidar convert_bytes_to_result(uint8_t* bytes) {
 
 // the setup routine runs once when you press reset:
 void setup() {
+  I2c.begin();
   lidar_result = (uint8_t*) malloc(3 * sizeof(uint8_t));
   
   #ifndef DISABLE_SERVOS
@@ -90,6 +112,7 @@ void setup() {
   #endif
 
   Serial.begin(9600);
+  delay(100);
 }
 
 void update_servos(int current_tilt, int current_pan) {
@@ -119,7 +142,7 @@ void update_servos(int current_tilt, int current_pan) {
 // the loop routine runs over and over again forever:
 void loop() {
   Serial.println("Testing");
-  read_distance(lidar_result);
+  lidar_read_distance(lidar_result);
   struct Lidar lidar = convert_bytes_to_result(lidar_result);
   
   #ifndef DISABLE_SERVOS
