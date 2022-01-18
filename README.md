@@ -8,5 +8,5 @@ Current components are Garmin Lidar LITE v3 and Sparkfuns cheap pan-tilt bracket
 Assuming I can produce useful distance point clouds with this setup, I might
 next update the servo parts to something better. 
 
-See [dev.log] for development notes.
+See [dev.log](./dev.log) for development notes.
 
