@@ -1,3 +1,12 @@
+3D lidar project
+================
 
-Let's use DSSCircuits.com Arduino I2C Master Library in order to use multibyte read support available in Lidar Lite v3
-dsscircuits.com/articles/86-articles/66-arduino-i2c-master-library
+This is long work in progress project aiming to create a dome-like scanning lidar
+implementation.
+
+Current components are Garmin Lidar LITE v3 and Sparkfuns cheap pan-tilt brackets + servos.
+Assuming I can produce useful distance point clouds with this setup, I might
+next update the servo parts to something better. 
+
+See [dev.log] for development notes.
+
