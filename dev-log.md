@@ -67,3 +67,18 @@ Someone somewhere also mentioned that the servo controls seems wrong,
 and the servo doesn't actually turn as much as it should. They had fixed it
 by using shorter PWM cycle length. Look into it if servos are not working well.
 
+
+Sunday, Jan 30, 2022
+--------------------
+
+Theory notes:
+- Easy way of logging the arduino output might be with screen:
+  https://www.pragmaticlinux.com/2021/11/how-to-monitor-the-serial-port-in-linux/
+
+- I should add a reset switch to the project - something that leads to servos resetting to
+  their initial position, generating a new run id for the scan and starting the scan anew.
+
+- In order to map the scanner outputs values (tilt, pan, distance) I will need to 
+  compute the conversion matrces - for example: 
+  https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
+
