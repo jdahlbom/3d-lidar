@@ -10,3 +10,7 @@ next update the servo parts to something better.
 
 See [dev.log](./dev.log) for development notes.
 
+Fritzing schematic of the device
+--------------------------------
+[Servo + Lidars](docs/lidar-with-servos-fritzing.png)
+
