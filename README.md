@@ -12,5 +12,5 @@ See [dev.log](./dev.log) for development notes.
 
 Fritzing schematic of the device
 --------------------------------
-[Servo + Lidars](docs/lidar-with-servos-fritzing.png)
+![Servo + Lidars](docs/lidar-with-servos-fritzing.png)
 
