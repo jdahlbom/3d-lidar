@@ -1,0 +1,151 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+
+\begin{document}
+\title{Coordinate mapping for pan/tilt Lidar}
+\author{Jukka Dahlbom}
+\maketitle
+
+
+Conversion from polar coordinates and lidar servo structure
+to cartesian coordinates is done with translation/rotation matrix
+multiplication.
+    
+These are the structure conversions, using positive x as "forward", y as "right" and z as "upwards" axies - a "left handed" axis setup,
+and starting with measurements lidar distance $d$, pan angle $\alpha$ and tilt angle $\beta$:
+\begin{itemize}
+\item Rotation arm attach point is the origin.
+\item The pan servo and attachment arm gives us rotation alpha around $z$-axis
+\item The tilt servo rotates the device by $\beta$ around 
+the $y$-axis.
+\item Distance from Lidar is the measurement position relative to Lidar $X = \begin{bmatrix}d & 0 & 0 & 1 \end{bmatrix}^T$
+\end{itemize}
+
+Pan rotation matrix:
+
+\begin{equation}
+M_{pan} =
+\begin{bmatrix}
+  cos(\alpha) & -sin(\alpha) &	0	& 0\\
+  sin(\alpha) &	cos(\alpha)	 &  0   & 0\\
+  0			  & 0			 &	1	& 0\\
+  0			  &	0			 &	0	& 1
+\end{bmatrix}
+\end{equation}
+
+Tilt rotation matrix:
+
+\begin{equation}
+M_{tilt} =
+\begin{bmatrix}
+  cos(\beta)  & 0		     &	-sin(\beta)	& 0\\
+  0			  &	1			 &  0   & 0\\
+  sin(\beta)  & 0			 &	cos(\beta)	& 0\\
+  0			  &	0			 &	0	& 1
+\end{bmatrix}
+\end{equation}
+
+Due to bracket attachments, there is also \emph{translation} 
+terms in addition to rotation. 
+In the early stages we could assume they 
+are zero, or significantly less than measured distances and 
+therefore irrelevant.
+
+The transformation matrices above look like this with translation
+terms:
+
+Pan transformation matrix:
+
+\begin{equation}
+M_{pan} =
+\begin{bmatrix}
+  cos(\alpha) & -sin(\alpha) &	0	& p_x\\
+  sin(\alpha) &	cos(\alpha)	 &  0   & p_y\\
+  0			  & 0			 &	1	& p_z\\
+  0			  &	0			 &	0	& 1
+\end{bmatrix}
+\end{equation}
+
+
+Tilt transformation matrix:
+\begin{equation}
+M_{tilt-t} =
+\begin{bmatrix}
+  cos(\beta)  & 0		     &	-sin(\beta)	& t_x\\
+  0			  &	1			 &  0   		& t_y \\
+  sin(\beta)  & 0			 &	cos(\beta)	& t_z \\
+  0			  &	0			 &	0	& 1
+\end{bmatrix}
+\end{equation}
+
+In my arrangement, $d_y$ term is zero in both cases - there is no sideways translation.
+
+The applied transformation is in entirety:
+
+\begin{equation}
+X' = M_{pan} * M_{tilt} * X
+\end{equation}
+
+Without translation terms:
+\begin{equation}
+X' =
+\begin{bmatrix}
+cos(\alpha)*cos(\beta)	& -sin(\alpha) & cos(\alpha)*-sin(\beta) & 0\\
+sin(\alpha)*cos(\beta) 	& cos(\alpha) & sin(\alpha)*-sin(\beta) & 0\\
+sin(\beta)	&	0 & cos(\beta)	&	0\\
+0 & 0 & 0 & 1
+\end{bmatrix}
+*
+\begin{bmatrix}
+d \\ 0 \\ 0 \\ 1
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+X' = 
+\begin{bmatrix}
+d_x' \\
+d_y' \\
+d_z' \\
+1
+\end{bmatrix}
+=
+\begin{bmatrix}
+d * cos(\alpha) * cos(\beta) \\
+d * sin(\alpha) * cos(\beta) \\
+d * sin(\beta) \\
+1
+\end{bmatrix}
+\end{equation}
+
+With translation terms (remember that $t_y = p_y = 0$) the combined translation matrix is:
+\begin{equation}
+X' = 
+\begin{bmatrix}
+cos(\alpha)*cos(\beta) & -sin(\alpha) & cos(\alpha)*-sin(\beta) & cos(\alpha)*t_x + p_x \\
+sin(\alpha)*cos(\beta) & cos(\alpha) & sin(\alpha)*cos(\beta) &
+sin(\alpha)*t_x + p_y \\
+sin(\beta)	&	0	& cos(\beta) & t_z + p_z \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+* X
+\end{equation}
+
+Transformed coordinates are in this case:
+\begin{equation}
+X' = 
+\begin{bmatrix}
+d * cos(\alpha) * cos(\beta) + cos(\alpha)*t_x + p_x \\
+d * sin(\alpha) * cos(\beta) + sin(\alpha)*t_x \\
+d * sin(\beta) + t_z + p_z \\
+1
+\end{bmatrix}
+\end{equation}
+
+\end{document}
