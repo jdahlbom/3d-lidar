@@ -82,3 +82,23 @@ Theory notes:
   compute the conversion matrces - for example: 
   https://www.brainvoyager.com/bv/doc/UsersGuide/CoordsAndTransforms/SpatialTransformationMatrices.html
 
+
+Sunday, Feb 06, 2022
+--------------------
+
+Math part finally nearing potential usefulness. There are several conversions to note
+which are detailed in the LaTeX document.
+Current implementation gives correct height value within the +-2.5cm measurement error range
+when measuring from the floor to device origin.
+
+Results are stored as CSV for intermediate use.
+
+There is a lidar data visualizer site which I intend to make use of for validating the lidar data
+conversions and usage - as far as I need to for current measurements: 
+http://lidarview.com/
+
+Lidarview uses LAS 1.2 formatted input files, so next part is converting cartesian xyz-coordinate CSV into
+LAS 1.2 file. Automating this pipeline improves my feedback time from device measurements to 
+visually inspectable image that can be improved. Same goes for combining possible future measurements from several 
+device locations in the same scene / 3d space.
+
