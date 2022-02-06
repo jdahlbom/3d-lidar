@@ -17,6 +17,7 @@ Conversion from polar coordinates and lidar servo structure
 to cartesian coordinates is done with translation/rotation matrix
 multiplication.
     
+\section*{The structure}
 These are the structure conversions, using positive x as "forward", y as "right" and z as "upwards" axies - a "left handed" axis setup,
 and starting with measurements lidar distance $d$, pan angle $\alpha$ and tilt angle $\beta$:
 \begin{itemize}
@@ -147,5 +148,14 @@ d * sin(\beta) + t_z + p_z \\
 1
 \end{bmatrix}
 \end{equation}
+
+\section*{Problems and questions}
+In order to produce numbers relative to origin, translation
+values in both pan and tilt matrices should be substracted
+from the result instead of adding them.
+
+This is most easily solved by making the $t_x$, $p_x$, $t_z$ and
+$p_z$ values negative. It bothers me though, this needs
+to be drawn out to properly figure out the conceptual change.
 
 \end{document}
