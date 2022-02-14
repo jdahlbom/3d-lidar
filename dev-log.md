@@ -102,3 +102,17 @@ LAS 1.2 file. Automating this pipeline improves my feedback time from device mea
 visually inspectable image that can be improved. Same goes for combining possible future measurements from several 
 device locations in the same scene / 3d space.
 
+
+Sunday, Feb 13, 2022
+--------------------
+
+Added intensity measurement. Noticed that my matte hanged images show difference in lidar intensity depending
+on the viewing angle: From straight ahead it does not differ from matte wall, from more 
+acute angle it shows significant difference.
+
+Updated the pan/tilt angle step to 1 degree, and was happy to notice that even current wobbly construction
+of lidar arm gives fairly proper results.
+
+Open issue: Serial printing in different rows seems to occasionally skip some characters. This might
+have to do with printing several entries in sequence, rather than printing it all in one printf
+

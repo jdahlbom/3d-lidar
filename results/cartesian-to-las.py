@@ -14,6 +14,7 @@ def convert_csv_to_las(filename, target):
     las.x = coords[:,1]
     las.y = coords[:,2]
     las.z = coords[:,3]
+    las.intensity = coords[:,4]
     las.write(target)
 
 if __name__=='__main__':

@@ -12,11 +12,12 @@ const int maxPan = 150;
 const int minPan = 30;
 const int maxTilt = 120;
 const int initialTiltCorrection = 30;
-int panIncrement = 3;
-int tiltIncrement = 5;
+int panIncrement = 1;
+int tiltIncrement = 1;
 const int stopDelay = 100;
 const int lidarDelay = 10;
 
+int loopCount = 0;
 int pan;
 int tilt;
 int runId;
@@ -66,10 +67,12 @@ int prompt() {
   }
 }
 
-void sendScanResults(int runId, int distance, int pan, int tilt) {
+void sendScanResults(int runId, int distance, int intensity, int pan, int tilt) {
   Serial.print(runId);
   Serial.print(",");
   Serial.print(distance);
+  Serial.print(",");
+  Serial.print(intensity);
   Serial.print(",");
   Serial.print(pan);
   Serial.print(",");
@@ -101,6 +104,27 @@ int mapServoPanToForwardZeroPan(int pan) {
   return pan - 90;
 }
 
+int lidarIntensity() {
+  byte isBusy = 1;
+  // Poll busy bit in status register until device is idle
+  while(isBusy)
+  {
+  // Read status register
+    Wire.beginTransmission(LIDARLITE_ADDR_DEFAULT);
+    Wire.write(0x01);
+    Wire.endTransmission();
+    Wire.requestFrom(LIDARLITE_ADDR_DEFAULT, 1);
+    int statusByte = Wire.read();
+    isBusy = bitRead(statusByte,0); // Take LSB of status register, busy bit
+  }
+  // read register 0x0e which is signal strength
+  Wire.beginTransmission(LIDARLITE_ADDR_DEFAULT);
+  Wire.write(0x0e);
+  Wire.endTransmission();
+  Wire.requestFrom(LIDARLITE_ADDR_DEFAULT, 1);
+  return Wire.read();
+}
+
 void loop(){
     if (blockLooping == true) {
       runId = prompt();
@@ -126,7 +150,15 @@ void loop(){
     tiltServo.write(tilt);
     panServo.write(pan);
     delay(stopDelay);
-    int dist = lidarLite.distance();
+    int dist;
+    if (loopCount == 100) {
+      dist = lidarLite.distance();
+      loopCount = 0;
+    } else {
+      dist = lidarLite.distance(false);
+      loopCount++;
+    }
+    int intensity = lidarIntensity();
     delay(lidarDelay);
-    sendScanResults(runId, dist, mapServoPanToForwardZeroPan(pan), mapServoTiltToRealTilt(tilt));
+    sendScanResults(runId, dist, intensity, mapServoPanToForwardZeroPan(pan), mapServoTiltToRealTilt(tilt));
 }

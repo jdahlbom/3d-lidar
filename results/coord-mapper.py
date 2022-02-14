@@ -32,9 +32,9 @@ def main():
     with open(argv[1], mode='r') as file:
         csvFile = csv.reader(file)
         for line in csvFile:
-            [runId, dist, pan, tilt] = line
+            [runId, dist, intensity, pan, tilt] = line
             [x, y, z] = convert(dist, pan, tilt)
-            print("{},{},{},{}".format(runId, x, y, z))
+            print("{},{},{},{},{}".format(runId, x, y, z, intensity))
 
 if __name__ == '__main__':
     main()
