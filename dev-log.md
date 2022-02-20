@@ -116,3 +116,23 @@ of lidar arm gives fairly proper results.
 Open issue: Serial printing in different rows seems to occasionally skip some characters. This might
 have to do with printing several entries in sequence, rather than printing it all in one printf
 
+
+Sunday, Feb 20, 2022
+--------------------
+
+Was able to run the scan with 1 degree differences. Realized that in order to build a proper scene,
+I need to patch together a set of different angles from same origin pointi. Instead of patching several
+measurement sets together, I'd much rather build a better mounting for the lidar that allows free 360 degree
+panning.
+Ideally one that would get rid of the vibration and wobbliness issues. It would be possible to also set
+up the lidar so that the lidar itself woulbe in the origin point of the measurements, even without translating
+the angular measurements by the lidar control arm dimensions. With proper wiring we should be able to get
+rid of the current situation where lidar has to drag its wiring at more extreme angles.
+
+So next part is learning about motors or continuous rotation servos. In order to deliver power and signals
+to freely panning system, we need to have a slip ring. Promising cheap option for it is the 2A 12 wire Sparkfun slip ring
+https://www.sparkfun.com/products/13065
+
+For now, I will see if I could build the lidar mount system using some readily available build kits such
+as the Actobotics product line: https://www.sparkfun.com/videos#actobotics/d3MBTT10pxk
+
